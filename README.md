@@ -1,8 +1,8 @@
 # ✈️ FlightGlobe
+![C#](https://img.shields.io/badge/C%23-239120?style=for-the-badge&logo=c-sharp&logoColor=white) ![FlightGlobe Banner](https://img.shields.io/badge/Godot-4.x-blue?style=for-the-badge&logo=godot-engine) ![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)
 
 > A stunning 3D visualization of global flight patterns built with Godot Engine
-
-![C#](https://img.shields.io/badge/C%23-239120?style=for-the-badge&logo=c-sharp&logoColor=white) ![FlightGlobe Banner](https://img.shields.io/badge/Godot-4.x-blue?style=for-the-badge&logo=godot-engine) ![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)
+<br/>
 
 FlightGlobe is a real-time 3D simulation that visualizes aircraft movements across the globe. Watch as planes traverse their flight paths in a mesmerizing display of global aviation traffic, all rendered on a beautiful 3D earth model.
 <img width="400" height="400" alt="image" src="https://github.com/user-attachments/assets/84140e2e-04af-4edf-bce3-e4919f05b47d" />
