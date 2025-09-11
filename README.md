@@ -51,8 +51,8 @@ FlightGlobe is a real-time 3D simulation that visualizes aircraft movements acro
    - Go to Project > Tools > C# > Create C# Solution
    - Build the solution in your preferred IDE
 4. Run the simulation
-  - Press F5 in Godot or click the play button
-  - Enjoy watching global flight patterns come to life!
+   - Press F5 in Godot or click the play button
+   - Enjoy watching global flight patterns come to life!
 
 ## 📊 Performance
 > The aim of this project was to use the CPU as much as possible to handle heavy computations,
