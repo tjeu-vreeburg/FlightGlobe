@@ -1,3 +1,33 @@
-# Godot 4+ specific ignores
+# Godot specific files and folders
 .godot/
-/android/
+*.import
+*.translation
+export_presets.cfg # Consider if you want to track export presets for CI/CD
+
+# C# and .NET specific files and folders
+.mono/
+.vs/
+bin/
+obj/
+*.csproj.user
+*.sln.user
+*.suo
+*.user
+*.pdb
+*.pidb
+*.log
+*.bak
+*.orig
+*.swp
+*.tmp
+GeneratedFiles/
+Packages/
+Temp/
+
+# Android specific files and folders
+android/build/
+android/*.apk
+android/*.aab
+android/*.keystore
+*.apk
+*.aab
