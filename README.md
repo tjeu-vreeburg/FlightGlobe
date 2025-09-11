@@ -5,10 +5,11 @@
 <br/>
 
 FlightGlobe is a real-time 3D simulation that visualizes aircraft movements across the globe. Watch as planes traverse their flight paths in a mesmerizing display of global aviation traffic, all rendered on a beautiful 3D earth model.
+
+<br/>
+
 <img width="400" height="400" alt="image" src="https://github.com/user-attachments/assets/84140e2e-04af-4edf-bce3-e4919f05b47d" />
 <img width="400" height="400" alt="image" src="https://github.com/user-attachments/assets/bc409243-0744-45a9-ad1b-e7899aae858a" />
-
-
 
 ## Features
 
