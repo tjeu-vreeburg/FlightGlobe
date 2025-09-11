@@ -1,0 +1,41 @@
+[gd_scene load_steps=6 format=3 uid="uid://chxjcphcqj22y"]
+
+[ext_resource type="Script" uid="uid://rt2trlk47vxf" path="res://scripts/scenes/FlightGlobeDemo.cs" id="1_645tp"]
+[ext_resource type="Texture2D" uid="uid://dvqhsxs5j2352" path="res://textures/earth.jpg" id="2_r7xnv"]
+[ext_resource type="Script" uid="uid://y62ash237o0g" path="res://scripts/base/OrbitCamera.cs" id="2_thcox"]
+[ext_resource type="Texture2D" uid="uid://cwvlubxle5aos" path="res://textures/airplane.webp" id="3_r7xnv"]
+
+[sub_resource type="Environment" id="Environment_r7xnv"]
+ambient_light_color = Color(0.947199, 0.947199, 0.947199, 1)
+
+[node name="FlightGlobeDemo" type="Node3D" node_paths=PackedStringArray("directionalLight", "fpsLabel")]
+script = ExtResource("1_645tp")
+sphereTexture = ExtResource("2_r7xnv")
+airplaneTexture = ExtResource("3_r7xnv")
+directionalLight = NodePath("DirectionalLight3D")
+fpsLabel = NodePath("CanvasLayer/Label")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_r7xnv")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="Label" type="Label" parent="CanvasLayer"]
+offset_right = 246.0
+offset_bottom = 74.0
+
+[node name="OrbitCamera" type="Node3D" parent="." node_paths=PackedStringArray("camera", "horizontal", "vertical")]
+script = ExtResource("2_thcox")
+camera = NodePath("Horizontal/Vertical/Camera3D")
+horizontal = NodePath("Horizontal")
+vertical = NodePath("Horizontal/Vertical")
+
+[node name="Horizontal" type="Node3D" parent="OrbitCamera"]
+
+[node name="Vertical" type="Node3D" parent="OrbitCamera/Horizontal"]
+
+[node name="Camera3D" type="Camera3D" parent="OrbitCamera/Horizontal/Vertical"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 5)
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(-0.948324, 0.126525, -0.290987, 0, 0.91706, 0.398749, 0.317305, 0.378143, -0.86967, 0, 0, 0)
