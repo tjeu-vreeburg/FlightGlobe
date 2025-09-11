@@ -20,8 +20,7 @@ FlightGlobe is a real-time 3D simulation that visualizes aircraft movements acro
 - **Dynamic Flight Duration**: Each flight has realistic timing based on actual route distances
 
 ## Demo
-
-*Experience the beauty of global aviation in real-time 3D*
+> Experience the beauty of global aviation in real-time 3D
 
 ### Key Visual Elements
 - **Aircraft Models**: Textured 3D representations of planes
