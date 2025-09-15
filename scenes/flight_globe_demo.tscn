@@ -1,18 +1,19 @@
-[gd_scene load_steps=6 format=3 uid="uid://chxjcphcqj22y"]
+[gd_scene load_steps=7 format=3 uid="uid://chxjcphcqj22y"]
 
 [ext_resource type="Script" uid="uid://rt2trlk47vxf" path="res://scripts/scenes/FlightGlobeDemo.cs" id="1_645tp"]
-[ext_resource type="Texture2D" uid="uid://dvqhsxs5j2352" path="res://textures/earth.jpg" id="2_r7xnv"]
+[ext_resource type="Texture2D" uid="uid://b8tvcsy1gwxnl" path="res://textures/earth_day.jpg" id="2_55425"]
 [ext_resource type="Script" uid="uid://y62ash237o0g" path="res://scripts/base/OrbitCamera.cs" id="2_thcox"]
+[ext_resource type="Texture2D" uid="uid://wkvkkbdhkhmw" path="res://textures/earth_night.jpg" id="3_eymju"]
 [ext_resource type="Texture2D" uid="uid://cwvlubxle5aos" path="res://textures/airplane.webp" id="3_r7xnv"]
 
 [sub_resource type="Environment" id="Environment_r7xnv"]
 ambient_light_color = Color(0.947199, 0.947199, 0.947199, 1)
 
-[node name="FlightGlobeDemo" type="Node3D" node_paths=PackedStringArray("directionalLight", "fpsLabel")]
+[node name="FlightGlobeDemo" type="Node3D" node_paths=PackedStringArray("fpsLabel")]
 script = ExtResource("1_645tp")
-sphereTexture = ExtResource("2_r7xnv")
+earthDayTexture = ExtResource("2_55425")
+earthNightTexture = ExtResource("3_eymju")
 airplaneTexture = ExtResource("3_r7xnv")
-directionalLight = NodePath("DirectionalLight3D")
 fpsLabel = NodePath("CanvasLayer/Label")
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
@@ -36,6 +37,3 @@ vertical = NodePath("Horizontal/Vertical")
 
 [node name="Camera3D" type="Camera3D" parent="OrbitCamera/Horizontal/Vertical"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 5)
-
-[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
-transform = Transform3D(-0.948324, 0.126525, -0.290987, 0, 0.91706, 0.398749, 0.317305, 0.378143, -0.86967, 0, 0, 0)

@@ -31,13 +31,15 @@ namespace FlightGlobe.Loaders
                 if (usedPairs.Contains(routeKey)) continue;
 
                 var randomAirplane = airplanes[random.Next(airplanes.Length)];
+                var randomDirection = (Direction) random.Next(2);
 
                 usedPairs.Add(routeKey);
                 routes.Add(new Route
                 {
                     Origin = origin,
                     Destination = destination,
-                    Airplane = randomAirplane
+                    Airplane = randomAirplane,
+                    Direction = randomDirection,
                 });
             }
 

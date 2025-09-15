@@ -9,9 +9,9 @@ namespace FlightGlobe
 {
     public partial class FlightGlobeDemo : Node3D
     {
-        [Export] private Texture2D sphereTexture;
+        [Export] private Texture2D earthDayTexture;
+        [Export] private Texture2D earthNightTexture;
         [Export] private Texture2D airplaneTexture;
-        [Export] private DirectionalLight3D directionalLight;
         [Export] private Label fpsLabel;
         [Export] private float radius = 1.0f;
         [Export] private float radiusOffset = 0.001f;
@@ -27,23 +27,37 @@ namespace FlightGlobe
             var airplanes = JsonLoader.GetValues<Airplane>("res://data/airplanes.json");
 
             var routes = RouteLoader.GetRoutes(airports, airplanes, routeCount);
+            var flightDirections = routes.Select(r => r.Direction).ToArray();
+            var flightDurations = routes.Select(r => r.GetDurationHours() * 3600 / speedMultiplier).ToArray();
             var flightPaths = routes.Select(r => r.GetCirclePath(radius, radiusOffset, segments)).ToArray();
-            var durations = routes.Select(r => r.GetDurationHours()).ToArray();
+
+            var earth = new Earth
+            {
+                TransitionSmoothness = 0.1f,
+                NightBlendFactor = 0.3f,
+                NightBrightness = 0.8f,
+                UseRealisticSeasons = true,
+                EmissionStrength = 1.1f,
+                EmissionThreshold = 0.5f,
+                FlickerIntensity = 0.7f,
+                FlickerSpeed = 1.0f,
+                Radius = radius,
+                SpeedMultiplier = speedMultiplier,
+            };
 
             var earthMesh = new EarthMesh
             {
-                Radius = radius,
-                Texture = sphereTexture,
-                DirectionalLight = directionalLight,
-                SpeedMultiplier = speedMultiplier
+                DayTexture = earthDayTexture,
+                NightTexture = earthNightTexture,
+                Earth = earth,
             };
 
             var flightsMultiMesh = new FlightsMultiMesh
             {
                 AirplaneTexture = airplaneTexture,
-                FlightDurations = durations,
+                FlightDirections = flightDirections,
+                FlightDurations = flightDurations,
                 FlightPaths = flightPaths,
-                SpeedMultiPlier = speedMultiplier
             };
 
             var routeLinesMesh = new RouteLinesMesh

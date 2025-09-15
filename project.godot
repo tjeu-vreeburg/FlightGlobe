@@ -32,3 +32,4 @@ renderer/rendering_method="gl_compatibility"
 renderer/rendering_method.mobile="gl_compatibility"
 textures/vram_compression/import_etc2_astc=true
 environment/defaults/default_clear_color=Color(0.0962047, 0.0962048, 0.0962047, 1)
+occlusion_culling/use_occlusion_culling=true
