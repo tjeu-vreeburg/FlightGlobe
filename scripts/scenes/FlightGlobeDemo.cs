@@ -65,7 +65,14 @@ namespace FlightGlobe
                 FlightPaths = flightPaths
             };
 
+            var airportMultiMesh = new AirportMultiMesh
+            {
+                Airports = airports,
+                Radius = radius
+            };
+
             AddChild(earthMesh);
+            AddChild(airportMultiMesh);
             AddChild(routeLinesMesh);
             AddChild(flightsMultiMesh);
         }
