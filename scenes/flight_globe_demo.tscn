@@ -9,8 +9,9 @@
 [sub_resource type="Environment" id="Environment_r7xnv"]
 ambient_light_color = Color(0.947199, 0.947199, 0.947199, 1)
 
-[node name="FlightGlobeDemo" type="Node3D" node_paths=PackedStringArray("fpsLabel")]
+[node name="FlightGlobeDemo" type="Node3D" node_paths=PackedStringArray("orbitCamera", "fpsLabel")]
 script = ExtResource("1_645tp")
+orbitCamera = NodePath("OrbitCamera")
 earthDayTexture = ExtResource("2_55425")
 earthNightTexture = ExtResource("3_eymju")
 airplaneTexture = ExtResource("3_r7xnv")

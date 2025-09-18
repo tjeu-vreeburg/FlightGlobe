@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using FlightGlobe.Base;
 using FlightGlobe.Data;
 using FlightGlobe.Loaders;
 using FlightGlobe.Meshes;
@@ -9,6 +10,7 @@ namespace FlightGlobe
 {
     public partial class FlightGlobeDemo : Node3D
     {
+        [Export] private OrbitCamera orbitCamera;
         [Export] private Texture2D earthDayTexture;
         [Export] private Texture2D earthNightTexture;
         [Export] private Texture2D airplaneTexture;
@@ -54,6 +56,7 @@ namespace FlightGlobe
 
             var flightsMultiMesh = new FlightsMultiMesh
             {
+                OrbitCamera = orbitCamera,
                 AirplaneTexture = airplaneTexture,
                 FlightDirections = flightDirections,
                 FlightDurations = flightDurations,
@@ -67,6 +70,7 @@ namespace FlightGlobe
 
             var airportMultiMesh = new AirportMultiMesh
             {
+                OrbitCamera = orbitCamera,
                 Airports = airports,
                 Radius = radius
             };

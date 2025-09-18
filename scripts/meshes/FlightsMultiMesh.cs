@@ -1,11 +1,14 @@
 using System;
+using FlightGlobe.Base;
 using FlightGlobe.Data;
+using FlightGlobe.Utilities;
 using Godot;
 
 namespace FlightGlobe.Meshes
 {
     public partial class FlightsMultiMesh : MultiMeshInstance3D
     {
+        public OrbitCamera OrbitCamera { get; set; }
         public Texture2D AirplaneTexture { get; set; }
         public Vector3[][] FlightPaths { get; set; }
         public Direction[] FlightDirections { get; set; }
@@ -15,7 +18,7 @@ namespace FlightGlobe.Meshes
         private readonly Random random = new();
 
         private float updateTimer = 0f;
-        private const float UPDATE_INTERVAL = 1f / 10f;
+        private const float UPDATE_INTERVAL = 1f / 60f;
 
         public override void _Ready()
         {
@@ -23,23 +26,13 @@ namespace FlightGlobe.Meshes
             {
                 TransformFormat = MultiMesh.TransformFormatEnum.Transform3D,
                 InstanceCount = FlightPaths.Length,
-                Mesh = GetAirplaneMesh()
+                Mesh = MeshUtil.CreateQuadMesh(AirplaneTexture, new (0.2f, 0.2f))
             };
 
             flightProgress = new float[FlightPaths.Length];
-
             for (int i = 0; i < FlightPaths.Length; i++)
             {
                 flightProgress[i] = random.NextSingle();
-
-                var path = FlightPaths[i];
-                var t = flightProgress[i] * (path.Length - 1);
-                var index = Mathf.Clamp((int)t, 0, path.Length - 2);
-                var fraction = t - index;
-                var position = path[index].Lerp(path[index + 1], fraction);
-                var transform = Transform3D.Identity.Translated(position);
-
-                Multimesh.SetInstanceTransform(i, transform);
             }
         }
 
@@ -94,8 +87,8 @@ namespace FlightGlobe.Meshes
             var position = path[index] + (path[nextIndex] - path[index]) * fraction;
             var surfaceNormal = position.Normalized();
 
-            var movementDirection = FlightDirections[i] == Direction.FROM ? 
-                path[nextIndex] - path[index] : 
+            var movementDirection = FlightDirections[i] == Direction.FROM ?
+                path[nextIndex] - path[index] :
                 path[index] - path[nextIndex];
 
             movementDirection = movementDirection.Normalized();
@@ -104,26 +97,15 @@ namespace FlightGlobe.Meshes
             var right = forward.Cross(surfaceNormal).Normalized();
 
             var basis = new Basis(right, forward, surfaceNormal);
+
+            var scale = 0.01f * (OrbitCamera.Zoom / 1.0f);
+            scale = Mathf.Clamp(scale, 0.05f, 0.5f);
+
+            basis = basis.Scaled(new Vector3(scale, scale, scale));
+
             var transform = new Transform3D(basis, position);
 
             Multimesh.SetInstanceTransform(i, transform);
-        }
-
-        private QuadMesh GetAirplaneMesh()
-        {
-            var airplaneMaterial = new StandardMaterial3D()
-            {
-                AlbedoTexture = AirplaneTexture,
-                ShadingMode = BaseMaterial3D.ShadingModeEnum.Unshaded,
-                Transparency = BaseMaterial3D.TransparencyEnum.AlphaScissor,
-                AlphaScissorThreshold = 0.5f,
-            };
-
-            return new QuadMesh
-            {
-                Size = new Vector2(0.01f, 0.01f),
-                Material = airplaneMaterial,
-            };
         }
     }
 }

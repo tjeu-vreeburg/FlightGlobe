@@ -1,4 +1,5 @@
 using FlightGlobe.Data;
+using FlightGlobe.Utilities;
 using Godot;
 
 namespace FlightGlobe.Meshes
@@ -19,20 +20,19 @@ namespace FlightGlobe.Meshes
 
         private float CalculateSunLatitude()
         {
-            if (!Earth.UseRealisticSeasons)
-                return 0.0f;
+            if (!Earth.UseRealisticSeasons) return 0.0f;
 
-            float daysSinceSolstice = dayOfYear - 172.0f;
-            float angle = daysSinceSolstice / 365.25f * 2.0f * Mathf.Pi;
+            var daysSinceSolstice = dayOfYear - 172.0f;
+            var angle = daysSinceSolstice / 365.25f * 2.0f * Mathf.Pi;
+            
             return EARTH_AXIAL_TILT * Mathf.Cos(angle);
         }
 
         public override void _EnterTree()
         {
-            var shader = GD.Load<Shader>("res://shaders/globe.gdshader");
             shaderMaterial = new ShaderMaterial
             {
-                Shader = shader
+                Shader = GD.Load<Shader>("res://shaders/globe.gdshader"),
             };
 
             shaderMaterial.SetShaderParameter("day_texture", DayTexture);
@@ -50,13 +50,7 @@ namespace FlightGlobe.Meshes
 
             MaterialOverride = shaderMaterial;
 
-            Mesh = new SphereMesh()
-            {
-                Radius = Earth.Radius,
-                Height = Earth.Radius * 2.0f,
-                RadialSegments = 64,
-                Rings = 32,
-            };
+            Mesh = MeshUtil.CreateSphereMesh(Earth.Radius, material: shaderMaterial);
 
             var degreesPerSecond = 360.0f / (24.0f * 3600.0f) * Earth.SpeedMultiplier;
             radiansPerSecond = Mathf.DegToRad(degreesPerSecond);
@@ -67,15 +61,16 @@ namespace FlightGlobe.Meshes
 
         public override void _Process(double delta)
         {
-            timeElapsed += (float)delta;
+            var deltaF = (float)delta;
+            timeElapsed += deltaF;
 
-            currentSunLongitude += (float)delta * radiansPerSecond;
+            currentSunLongitude += deltaF * radiansPerSecond;
             if (currentSunLongitude > Mathf.Tau)
                 currentSunLongitude -= Mathf.Tau;
 
             if (Earth.UseRealisticSeasons)
             {
-                dayOfYear += (float)delta * daysPerSecond;
+                dayOfYear += deltaF * daysPerSecond;
                 if (dayOfYear > 365.25f)
                     dayOfYear -= 365.25f;
             }

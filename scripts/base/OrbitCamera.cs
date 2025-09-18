@@ -21,8 +21,8 @@ namespace FlightGlobe.Base
 		private bool leftButtonDown = false;
 		private bool rightButtonDown = false;
 
-		private float zoom = 25.0f;
-		private float targetZoom = 25.0f;
+		public float TargetZoom { get; set; } = 25.0f;
+		public float Zoom { get; private set; } = 25.0f;
 		private float initialZoom;
 
 		private float targetHorizontalRotation;
@@ -33,16 +33,15 @@ namespace FlightGlobe.Base
 		[Signal]
 		public delegate void OnZoomSignalEventHandler(float zoom);
 
-
 		public override void _Process(double delta)
 		{
 			targetVerticalRotation = Mathf.Clamp(targetVerticalRotation, rotationBounds.X, rotationBounds.Y);
 			verticalRotation = (float)Mathf.Lerp(verticalRotation, targetVerticalRotation, rotationSpeed * delta);
 			horizontalRotation = (float)Mathf.Lerp(horizontalRotation, targetHorizontalRotation, rotationSpeed * delta);
 
-			targetZoom = Mathf.Clamp(targetZoom, zoomBounds.X, zoomBounds.Y);
-			zoom = (float)Mathf.Lerp(zoom, targetZoom, zoomSpeed * delta);
-			camera.Fov = zoom;
+			TargetZoom = Mathf.Clamp(TargetZoom, zoomBounds.X, zoomBounds.Y);
+			Zoom = (float)Mathf.Lerp(Zoom, TargetZoom, zoomSpeed * delta);
+			camera.Fov = Zoom;
 
 			var horizontalDegrees = horizontal.RotationDegrees;
 			horizontalDegrees.Y = horizontalRotation;
@@ -62,14 +61,14 @@ namespace FlightGlobe.Base
 
 				if (inputEventMouseButton.ButtonIndex == MouseButton.WheelDown)
 				{
-					targetZoom -= 0.1f * zoomSpeed;
-					EmitSignal(SignalName.OnZoomSignal, targetZoom);
+					TargetZoom -= 0.1f * zoomSpeed;
+					EmitSignal(SignalName.OnZoomSignal, TargetZoom);
 				}
 
 				if (inputEventMouseButton.ButtonIndex == MouseButton.WheelUp)
 				{
-					targetZoom += 0.1f * zoomSpeed;
-					EmitSignal(SignalName.OnZoomSignal, targetZoom);
+					TargetZoom += 0.1f * zoomSpeed;
+					EmitSignal(SignalName.OnZoomSignal, TargetZoom);
 				}
 			}
 
@@ -77,7 +76,7 @@ namespace FlightGlobe.Base
 			{
 				if (leftButtonDown)
 				{
-					var rotationScale = targetZoom / 15.0f;
+					var rotationScale = TargetZoom / 15.0f;
 					targetHorizontalRotation += -(inputEventMouseMotion.Relative.X * 0.1f * rotationScale);
 					targetVerticalRotation += -(inputEventMouseMotion.Relative.Y * 0.1f * rotationScale);
 				}

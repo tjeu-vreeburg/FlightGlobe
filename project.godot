@@ -12,7 +12,7 @@ config_version=5
 
 config/name="FlightGlobe"
 run/main_scene="res://scenes/flight_globe_demo.tscn"
-config/features=PackedStringArray("4.4", "C#", "GL Compatibility")
+config/features=PackedStringArray("4.5", "C#", "GL Compatibility")
 config/icon="res://icon.svg"
 
 [display]
@@ -20,7 +20,7 @@ config/icon="res://icon.svg"
 window/size/viewport_width=1920
 window/size/viewport_height=1080
 window/size/mode=3
-window/vsync/vsync_mode=0
+display_server/driver.macos=""
 
 [dotnet]
 
@@ -28,8 +28,17 @@ project/assembly_name="FlightGlobe"
 
 [rendering]
 
-renderer/rendering_method="gl_compatibility"
-renderer/rendering_method.mobile="gl_compatibility"
+occlusion_culling/bvh_build_quality=0
+textures/canvas_textures/default_texture_filter=2
+renderer/rendering_method="mobile"
 textures/vram_compression/import_etc2_astc=true
+lights_and_shadows/directional_shadow/soft_shadow_filter_quality=0
+lights_and_shadows/positional_shadow/soft_shadow_filter_quality=0
+camera/depth_of_field/depth_of_field_bokeh_shape=0
+camera/depth_of_field/depth_of_field_bokeh_quality=0
+environment/ssao/quality=1
+environment/ssil/quality=1
+environment/glow/upscale_mode=0
+global_illumination/sdfgi/frames_to_converge=0
+environment/volumetric_fog/use_filter=0
 environment/defaults/default_clear_color=Color(0.0962047, 0.0962048, 0.0962047, 1)
-occlusion_culling/use_occlusion_culling=true
