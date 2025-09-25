@@ -7,7 +7,6 @@ namespace FlightGlobe.Data
         public Airport Origin { get; set; }
         public Airport Destination { get; set; }
         public Airplane Airplane { get; set; }
-        public Direction Direction { get; set; }
 
         public Vector3[] GetCirclePath(float radius, float radiusOffset, int segments)
         {

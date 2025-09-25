@@ -1,5 +1,3 @@
-using System;
-using System.Linq;
 using FlightGlobe.Base;
 using FlightGlobe.Data;
 using FlightGlobe.Loaders;
@@ -23,15 +21,11 @@ namespace FlightGlobe
 
         public override void _Ready()
         {
-            var random = new Random();
-
             var airports = JsonLoader.GetValues<Airport>("res://data/airports.json");
             var airplanes = JsonLoader.GetValues<Airplane>("res://data/airplanes.json");
 
             var routes = RouteLoader.GetRoutes(airports, airplanes, routeCount);
-            var flightDirections = routes.Select(r => r.Direction).ToArray();
-            var flightDurations = routes.Select(r => r.GetDurationHours() * 3600 / speedMultiplier).ToArray();
-            var flightPaths = routes.Select(r => r.GetCirclePath(radius, radiusOffset, segments)).ToArray();
+            var flights = RouteLoader.CreateFlightsFromRoutes(routes, speedMultiplier, radius, radiusOffset, segments);
 
             var earth = new Earth
             {
@@ -58,14 +52,12 @@ namespace FlightGlobe
             {
                 OrbitCamera = orbitCamera,
                 AirplaneTexture = airplaneTexture,
-                FlightDirections = flightDirections,
-                FlightDurations = flightDurations,
-                FlightPaths = flightPaths,
+                Flights = flights,
             };
 
-            var routeLinesMesh = new RouteLinesMesh
+            var flightLineMesh = new FlightLineMesh
             {
-                FlightPaths = flightPaths
+                Flights = flights
             };
 
             var airportMultiMesh = new AirportMultiMesh
@@ -75,9 +67,9 @@ namespace FlightGlobe
                 Radius = radius
             };
 
-            AddChild(earthMesh);
+            //AddChild(earthMesh);
             AddChild(airportMultiMesh);
-            AddChild(routeLinesMesh);
+            //AddChild(flightLineMesh);
             AddChild(flightsMultiMesh);
         }
         public override void _Process(double delta)

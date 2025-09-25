@@ -7,7 +7,24 @@ namespace FlightGlobe.Loaders
 {
     public partial class RouteLoader : Node
     {
-         public static List<Route> GetRoutes(Airport[] airports, Airplane[] airplanes, int maxRoutes)
+        public static Flight[] CreateFlightsFromRoutes(List<Route> routes, float speedMultiplier, float radius, float radiusOffset, int segments)
+        {
+            var random = new Random();
+            var flights = new Flight[routes.Count];
+            for (int i = 0; i < routes.Count; i++)
+            {
+                var route = routes[i];
+                flights[i] = new Flight
+                {
+                    Path = route.GetCirclePath(radius, radiusOffset, segments),
+                    DurationInSeconds = route.GetDurationHours() * 3600 / speedMultiplier,
+                    Direction = (Direction)random.Next(2),
+                };
+            }
+            return flights;
+        }
+
+        public static List<Route> GetRoutes(Airport[] airports, Airplane[] airplanes, int maxRoutes)
         {
             var routes = new List<Route>();
             var usedPairs = new HashSet<string>();
@@ -31,7 +48,6 @@ namespace FlightGlobe.Loaders
                 if (usedPairs.Contains(routeKey)) continue;
 
                 var randomAirplane = airplanes[random.Next(airplanes.Length)];
-                var randomDirection = (Direction) random.Next(2);
 
                 usedPairs.Add(routeKey);
                 routes.Add(new Route
@@ -39,7 +55,6 @@ namespace FlightGlobe.Loaders
                     Origin = origin,
                     Destination = destination,
                     Airplane = randomAirplane,
-                    Direction = randomDirection,
                 });
             }
 
