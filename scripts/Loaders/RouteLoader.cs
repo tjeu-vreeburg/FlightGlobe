@@ -16,6 +16,8 @@ namespace FlightGlobe.Loaders
                 var route = routes[i];
                 flights[i] = new Flight
                 {
+                    Route = route,
+                    Airplane = route.Airplane,
                     Path = route.GetCirclePath(radius, radiusOffset, segments),
                     DurationInSeconds = route.GetDurationHours() * 3600 / speedMultiplier,
                     Direction = (Direction)random.Next(2),

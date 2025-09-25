@@ -1,20 +1,24 @@
-[gd_scene load_steps=7 format=3 uid="uid://chxjcphcqj22y"]
+[gd_scene load_steps=9 format=3 uid="uid://chxjcphcqj22y"]
 
 [ext_resource type="Script" uid="uid://rt2trlk47vxf" path="res://scripts/scenes/FlightGlobeDemo.cs" id="1_645tp"]
 [ext_resource type="Texture2D" uid="uid://b8tvcsy1gwxnl" path="res://textures/earth_day.jpg" id="2_55425"]
 [ext_resource type="Script" uid="uid://y62ash237o0g" path="res://scripts/base/OrbitCamera.cs" id="2_thcox"]
 [ext_resource type="Texture2D" uid="uid://wkvkkbdhkhmw" path="res://textures/earth_night.jpg" id="3_eymju"]
 [ext_resource type="Texture2D" uid="uid://cwvlubxle5aos" path="res://textures/airplane.webp" id="3_r7xnv"]
+[ext_resource type="Script" uid="uid://clnbhk3knx60r" path="res://scripts/userinterface/AirportCard.cs" id="5_eymju"]
+[ext_resource type="Script" uid="uid://p1f7r2gvmqyv" path="res://scripts/userinterface/FlightCard.cs" id="6_fq5tg"]
 
 [sub_resource type="Environment" id="Environment_r7xnv"]
 ambient_light_color = Color(0.947199, 0.947199, 0.947199, 1)
 
-[node name="FlightGlobeDemo" type="Node3D" node_paths=PackedStringArray("orbitCamera", "fpsLabel")]
+[node name="FlightGlobeDemo" type="Node3D" node_paths=PackedStringArray("orbitCamera", "airportCard", "flightCard", "fpsLabel")]
 script = ExtResource("1_645tp")
 orbitCamera = NodePath("OrbitCamera")
 earthDayTexture = ExtResource("2_55425")
 earthNightTexture = ExtResource("3_eymju")
 airplaneTexture = ExtResource("3_r7xnv")
+airportCard = NodePath("CanvasLayer/AirportCard")
+flightCard = NodePath("CanvasLayer/FlightCard")
 fpsLabel = NodePath("CanvasLayer/Label")
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
@@ -23,8 +27,86 @@ environment = SubResource("Environment_r7xnv")
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 
 [node name="Label" type="Label" parent="CanvasLayer"]
-offset_right = 246.0
-offset_bottom = 74.0
+offset_left = 20.0
+offset_top = 20.0
+offset_right = 266.0
+offset_bottom = 94.0
+
+[node name="AirportCard" type="PanelContainer" parent="CanvasLayer" node_paths=PackedStringArray("airportName", "airportCode", "airportLatitude", "airportLongitude")]
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -81.0
+offset_top = -184.0
+offset_right = -20.0
+offset_bottom = -20.0
+grow_horizontal = 0
+grow_vertical = 0
+script = ExtResource("5_eymju")
+airportName = NodePath("MarginContainer/VBoxContainer/Airport Name")
+airportCode = NodePath("MarginContainer/VBoxContainer/Airport Code")
+airportLatitude = NodePath("MarginContainer/VBoxContainer/Airport Latitude")
+airportLongitude = NodePath("MarginContainer/VBoxContainer/Airport Longitude")
+
+[node name="MarginContainer" type="MarginContainer" parent="CanvasLayer/AirportCard"]
+layout_mode = 2
+theme_override_constants/margin_left = 30
+theme_override_constants/margin_top = 30
+theme_override_constants/margin_right = 30
+theme_override_constants/margin_bottom = 30
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/AirportCard/MarginContainer"]
+layout_mode = 2
+
+[node name="Airport Name" type="Label" parent="CanvasLayer/AirportCard/MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Airport Code" type="Label" parent="CanvasLayer/AirportCard/MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Airport Latitude" type="Label" parent="CanvasLayer/AirportCard/MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Airport Longitude" type="Label" parent="CanvasLayer/AirportCard/MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="FlightCard" type="PanelContainer" parent="CanvasLayer" node_paths=PackedStringArray("flightOrigin", "flightDestination", "flightAircraft")]
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -81.0
+offset_top = -157.0
+offset_right = -20.0
+offset_bottom = -20.0
+grow_horizontal = 0
+grow_vertical = 0
+script = ExtResource("6_fq5tg")
+flightOrigin = NodePath("MarginContainer/VBoxContainer/Flight Origin")
+flightDestination = NodePath("MarginContainer/VBoxContainer/Flight Destination")
+flightAircraft = NodePath("MarginContainer/VBoxContainer/Flight Aircraft")
+
+[node name="MarginContainer" type="MarginContainer" parent="CanvasLayer/FlightCard"]
+layout_mode = 2
+theme_override_constants/margin_left = 30
+theme_override_constants/margin_top = 30
+theme_override_constants/margin_right = 30
+theme_override_constants/margin_bottom = 30
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/FlightCard/MarginContainer"]
+layout_mode = 2
+
+[node name="Flight Origin" type="Label" parent="CanvasLayer/FlightCard/MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Flight Destination" type="Label" parent="CanvasLayer/FlightCard/MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Flight Aircraft" type="Label" parent="CanvasLayer/FlightCard/MarginContainer/VBoxContainer"]
+layout_mode = 2
 
 [node name="OrbitCamera" type="Node3D" parent="." node_paths=PackedStringArray("camera", "horizontal", "vertical")]
 script = ExtResource("2_thcox")

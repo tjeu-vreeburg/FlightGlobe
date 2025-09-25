@@ -15,7 +15,7 @@ namespace FlightGlobe.areas
             {
                 Shape = new SphereShape3D
                 {
-                    Radius = 0.01f,
+                    Radius = 0.02f,
                 },
             };
 

@@ -2,6 +2,7 @@ using FlightGlobe.Base;
 using FlightGlobe.Data;
 using FlightGlobe.Loaders;
 using FlightGlobe.Meshes;
+using FlightGlobe.UserInterface;
 using Godot;
 
 namespace FlightGlobe
@@ -12,6 +13,8 @@ namespace FlightGlobe
         [Export] private Texture2D earthDayTexture;
         [Export] private Texture2D earthNightTexture;
         [Export] private Texture2D airplaneTexture;
+        [Export] private AirportCard airportCard;
+        [Export] private FlightCard flightCard;
         [Export] private Label fpsLabel;
         [Export] private float radius = 1.0f;
         [Export] private float radiusOffset = 0.001f;
@@ -67,9 +70,23 @@ namespace FlightGlobe
                 Radius = radius
             };
 
-            //AddChild(earthMesh);
+            airportMultiMesh.AirportClicked += (airportIndex) =>
+            {
+                airportCard.Update(airports[airportIndex]);
+                airportCard.Show();
+                flightCard.Hide();
+            };
+
+            flightsMultiMesh.FlightClicked += (flightIndex) =>
+            {
+                flightCard.Update(flights[flightIndex]);
+                flightCard.Show();
+                airportCard.Hide();
+            };
+
+            AddChild(earthMesh);
             AddChild(airportMultiMesh);
-            //AddChild(flightLineMesh);
+            AddChild(flightLineMesh);
             AddChild(flightsMultiMesh);
         }
         public override void _Process(double delta)

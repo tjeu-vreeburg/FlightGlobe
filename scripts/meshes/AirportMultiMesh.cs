@@ -14,13 +14,16 @@ namespace FlightGlobe.Meshes
 
         private AirportCollisionArea[] airportAreas;
 
+        [Signal]
+        public delegate void AirportClickedEventHandler(int airportIndex);
+
         public override void _Ready()
         {
             Multimesh = new MultiMesh
             {
                 TransformFormat = MultiMesh.TransformFormatEnum.Transform3D,
                 InstanceCount = Airports.Length,
-                Mesh = MeshUtil.CreateSphereMesh(0.01f, color: Colors.White)
+                Mesh = MeshUtil.CreateSphereMesh(0.02f, color: Colors.Aqua)
             };
 
             airportAreas = new AirportCollisionArea[Airports.Length];
@@ -33,7 +36,7 @@ namespace FlightGlobe.Meshes
 
                 airportArea.AirportClicked += (airportIndex, screenPosition) =>
                 {
-                    GD.Print($"Airport {airportIndex} clicked at {screenPosition}");
+                    EmitSignal(SignalName.AirportClicked, airportIndex);
                 };
 
                 airportAreas[i] = airportArea;
@@ -47,8 +50,8 @@ namespace FlightGlobe.Meshes
 
         private void UpdateMesh(float zoom = 0.0f)
         {
-            var scale = 0.01f * (zoom / 1.0f);
-            scale = Mathf.Clamp(scale, 0.1f, 1.0f);
+            var scale = 0.02f * (zoom / 1.0f);
+            scale = Mathf.Clamp(scale, 0.1f, 0.25f);
 
             var basis = Basis.Identity.Scaled(new Vector3(scale, scale, scale));
 

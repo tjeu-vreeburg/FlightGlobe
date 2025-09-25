@@ -12,6 +12,9 @@ namespace FlightGlobe.Meshes
         public Texture2D AirplaneTexture { get; set; }
         public OrbitCamera OrbitCamera { get; set; }
         public Flight[] Flights { get; set; }
+
+        [Signal]
+        public delegate void FlightClickedEventHandler(int flightIndex);
        
         private FlightCollisionArea[] flightAreas;
         private float updateTimer = 0f;
@@ -36,7 +39,7 @@ namespace FlightGlobe.Meshes
 
                 flightArea.FlightClicked += (flightIndex, screenPosition) =>
                 {
-                    GD.Print($"Flight {flightIndex} clicked at {screenPosition}");
+                    EmitSignal(SignalName.FlightClicked, flightIndex);
                 };
 
                 flightAreas[i] = flightArea;

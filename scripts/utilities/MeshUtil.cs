@@ -23,8 +23,8 @@ namespace FlightGlobe.Utilities
             {
                 Radius = radius,
                 Height = radius * 2.0f,
-                RadialSegments = 32,
-                Rings = 16,
+                RadialSegments = 64,
+                Rings = 32,
                 Material = material
             };
         }
