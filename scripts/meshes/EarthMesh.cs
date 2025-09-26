@@ -1,6 +1,7 @@
 using FlightGlobe.Data;
 using FlightGlobe.Utilities;
 using Godot;
+using System;
 
 namespace FlightGlobe.Meshes
 {
@@ -9,27 +10,51 @@ namespace FlightGlobe.Meshes
         public Texture2D DayTexture { get; set; }
         public Texture2D NightTexture { get; set; }
         public Earth Earth { get; set; }
+        public DateTime DateTime { get; set; }
+
+        private DateTime startTime;
+        private ShaderMaterial shaderMaterial;
 
         private const float EARTH_AXIAL_TILT = 23.44f;
         private float radiansPerSecond;
-        private ShaderMaterial shaderMaterial;
         private float currentSunLongitude = 0.0f;
         private float daysPerSecond;
-        private float timeElapsed = 0.0f;
         private float dayOfYear;
+
+        private static float CalculateDayOfYear(DateTime dateTime)
+        {
+            var startOfYear = new DateTime(dateTime.Year, 1, 1);
+            var dayOfYear = (dateTime - startOfYear).TotalDays + 1;
+            return (float)dayOfYear;
+        }
+
+        private static float CalculateSunLongitude(DateTime dateTime)
+        {
+            var hoursFromMidnight = dateTime.Hour + (dateTime.Minute / 60.0f) + (dateTime.Second / 3600.0f);
+            
+            var longitude = (hoursFromMidnight * 15.0f) + 180.0f;
+            if (longitude >= 360.0f) longitude -= 360.0f;
+            
+            return Mathf.DegToRad(longitude);
+        }
 
         private float CalculateSunLatitude()
         {
             if (!Earth.UseRealisticSeasons) return 0.0f;
 
-            var daysSinceSolstice = dayOfYear - 172.0f;
-            var angle = daysSinceSolstice / 365.25f * 2.0f * Mathf.Pi;
+            var daysSinceVernalEquinox = dayOfYear - 79.0f;
+            if (daysSinceVernalEquinox < 0) daysSinceVernalEquinox += 365.25f;
             
-            return EARTH_AXIAL_TILT * Mathf.Cos(angle);
+            var angle = daysSinceVernalEquinox / 365.25f * 2.0f * Mathf.Pi;
+            
+            return EARTH_AXIAL_TILT * Mathf.Sin(angle);
         }
 
         public override void _EnterTree()
         {
+            dayOfYear = CalculateDayOfYear(DateTime);
+            currentSunLongitude = CalculateSunLongitude(DateTime);
+
             shaderMaterial = new ShaderMaterial
             {
                 Shader = GD.Load<Shader>("res://shaders/globe.gdshader"),
@@ -46,7 +71,7 @@ namespace FlightGlobe.Meshes
             shaderMaterial.SetShaderParameter("emission_threshold", Earth.EmissionThreshold);
             shaderMaterial.SetShaderParameter("flicker_intensity", Earth.FlickerIntensity);
             shaderMaterial.SetShaderParameter("flicker_speed", Earth.FlickerSpeed);
-            shaderMaterial.SetShaderParameter("time_offset", timeElapsed);
+            shaderMaterial.SetShaderParameter("time_offset", 0.0f); // Reset since we're using real time
 
             MaterialOverride = shaderMaterial;
 
@@ -61,19 +86,8 @@ namespace FlightGlobe.Meshes
 
         public override void _Process(double delta)
         {
-            var deltaF = (float)delta;
-            timeElapsed += deltaF;
-
-            currentSunLongitude += deltaF * radiansPerSecond;
-            if (currentSunLongitude > Mathf.Tau)
-                currentSunLongitude -= Mathf.Tau;
-
-            if (Earth.UseRealisticSeasons)
-            {
-                dayOfYear += deltaF * daysPerSecond;
-                if (dayOfYear > 365.25f)
-                    dayOfYear -= 365.25f;
-            }
+            dayOfYear = CalculateDayOfYear(DateTime);
+            currentSunLongitude = CalculateSunLongitude(DateTime);
 
             if (shaderMaterial != null)
             {
@@ -86,7 +100,9 @@ namespace FlightGlobe.Meshes
                 shaderMaterial.SetShaderParameter("emission_threshold", Earth.EmissionThreshold);
                 shaderMaterial.SetShaderParameter("flicker_intensity", Earth.FlickerIntensity);
                 shaderMaterial.SetShaderParameter("flicker_speed", Earth.FlickerSpeed);
-                shaderMaterial.SetShaderParameter("time_offset", timeElapsed);
+                
+                var realElapsedTime = (float)(DateTime.Now - startTime).TotalSeconds;
+                shaderMaterial.SetShaderParameter("time_offset", realElapsedTime);
             }
         }
     }

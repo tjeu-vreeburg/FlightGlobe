@@ -19,8 +19,24 @@ namespace FlightGlobe.Loaders
                     Route = route,
                     Airplane = route.Airplane,
                     Path = route.GetCirclePath(radius, radiusOffset, segments),
-                    DurationInSeconds = route.GetDurationHours() * 3600 / speedMultiplier,
-                    Direction = (Direction)random.Next(2),
+                    Schedules =
+                    [
+                        new Schedule
+                        {
+                            DepartureDay = (DayOfWeek)random.Next(0, 7),
+                            DepartureTime = new TimeOnly(random.Next(0, 24), random.Next(0, 60))
+                        },
+                        new Schedule
+                        {
+                            DepartureDay = (DayOfWeek)random.Next(0, 7),
+                            DepartureTime = new TimeOnly(random.Next(0, 24), random.Next(0, 60))
+                        },
+                        new Schedule
+                        {
+                            DepartureDay = (DayOfWeek)random.Next(0, 7),
+                            DepartureTime = new TimeOnly(random.Next(0, 24), random.Next(0, 60))
+                        }
+                    ]
                 };
             }
             return flights;

@@ -62,6 +62,7 @@ layout_mode = 2
 
 [node name="Airport Name" type="Label" parent="CanvasLayer/AirportCard/MarginContainer/VBoxContainer"]
 layout_mode = 2
+theme_override_colors/font_color = Color(0.721221, 0.9999998, 0.9954718, 1)
 
 [node name="Airport Code" type="Label" parent="CanvasLayer/AirportCard/MarginContainer/VBoxContainer"]
 layout_mode = 2
@@ -72,7 +73,7 @@ layout_mode = 2
 [node name="Airport Longitude" type="Label" parent="CanvasLayer/AirportCard/MarginContainer/VBoxContainer"]
 layout_mode = 2
 
-[node name="FlightCard" type="PanelContainer" parent="CanvasLayer" node_paths=PackedStringArray("flightOrigin", "flightDestination", "flightAircraft")]
+[node name="FlightCard" type="PanelContainer" parent="CanvasLayer" node_paths=PackedStringArray("flightOrigin", "flightDestination", "flightAircraft", "flightDeparture", "flightArrival")]
 anchors_preset = 3
 anchor_left = 1.0
 anchor_top = 1.0
@@ -88,6 +89,8 @@ script = ExtResource("6_fq5tg")
 flightOrigin = NodePath("MarginContainer/VBoxContainer/Flight Origin")
 flightDestination = NodePath("MarginContainer/VBoxContainer/Flight Destination")
 flightAircraft = NodePath("MarginContainer/VBoxContainer/Flight Aircraft")
+flightDeparture = NodePath("MarginContainer/VBoxContainer/Flight Departure")
+flightArrival = NodePath("MarginContainer/VBoxContainer/Flight Arrival")
 
 [node name="MarginContainer" type="MarginContainer" parent="CanvasLayer/FlightCard"]
 layout_mode = 2
@@ -106,6 +109,12 @@ layout_mode = 2
 layout_mode = 2
 
 [node name="Flight Aircraft" type="Label" parent="CanvasLayer/FlightCard/MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Flight Departure" type="Label" parent="CanvasLayer/FlightCard/MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Flight Arrival" type="Label" parent="CanvasLayer/FlightCard/MarginContainer/VBoxContainer"]
 layout_mode = 2
 
 [node name="OrbitCamera" type="Node3D" parent="." node_paths=PackedStringArray("camera", "horizontal", "vertical")]

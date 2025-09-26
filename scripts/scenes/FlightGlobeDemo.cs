@@ -1,3 +1,4 @@
+using System;
 using FlightGlobe.Base;
 using FlightGlobe.Data;
 using FlightGlobe.Loaders;
@@ -30,6 +31,8 @@ namespace FlightGlobe
             var routes = RouteLoader.GetRoutes(airports, airplanes, routeCount);
             var flights = RouteLoader.CreateFlightsFromRoutes(routes, speedMultiplier, radius, radiusOffset, segments);
 
+            var dateTime = DateTime.Now;
+
             var earth = new Earth
             {
                 TransitionSmoothness = 0.1f,
@@ -49,6 +52,7 @@ namespace FlightGlobe
                 DayTexture = earthDayTexture,
                 NightTexture = earthNightTexture,
                 Earth = earth,
+                DateTime = dateTime, 
             };
 
             var flightsMultiMesh = new FlightsMultiMesh
@@ -56,11 +60,13 @@ namespace FlightGlobe
                 OrbitCamera = orbitCamera,
                 AirplaneTexture = airplaneTexture,
                 Flights = flights,
+                DateTime = dateTime, 
             };
 
             var flightLineMesh = new FlightLineMesh
             {
-                Flights = flights
+                Flights = flights,
+                DateTime = dateTime, 
             };
 
             var airportMultiMesh = new AirportMultiMesh

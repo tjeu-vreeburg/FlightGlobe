@@ -12,8 +12,8 @@ namespace FlightGlobe.UserInterface
 
         public void Update(Airport airport)
         {
-            airportName.Text = $"Name: {airport.Name}";
-            airportCode.Text = $"Code: {airport.IATA}";
+            airportName.Text = $"{airport.Name}";
+            airportCode.Text = $"{airport.IATA} | {airport.ICAO}";
             airportLatitude.Text = $"Latitude: {airport.Coordinate.Latitude:F4}";
             airportLongitude.Text = $"Longitude: {airport.Coordinate.Longitude:F4}";
         }

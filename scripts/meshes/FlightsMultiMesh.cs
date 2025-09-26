@@ -12,13 +12,13 @@ namespace FlightGlobe.Meshes
         public Texture2D AirplaneTexture { get; set; }
         public OrbitCamera OrbitCamera { get; set; }
         public Flight[] Flights { get; set; }
+        public DateTime DateTime { get; set; }
+
+        private FlightCollisionArea[] flightAreas;
+        private DeltaTimer deltaTimer = new();
 
         [Signal]
         public delegate void FlightClickedEventHandler(int flightIndex);
-       
-        private FlightCollisionArea[] flightAreas;
-        private float updateTimer = 0f;
-        private const float UPDATE_INTERVAL = 1f / 60f;
 
         public override void _Ready()
         {
@@ -26,7 +26,7 @@ namespace FlightGlobe.Meshes
             {
                 TransformFormat = MultiMesh.TransformFormatEnum.Transform3D,
                 InstanceCount = Flights.Length,
-                Mesh = MeshUtil.CreateQuadMesh(AirplaneTexture, new (0.2f, 0.2f))
+                Mesh = MeshUtil.CreateQuadMesh(AirplaneTexture, new(0.2f, 0.2f))
             };
 
             flightAreas = new FlightCollisionArea[Flights.Length];
@@ -42,7 +42,13 @@ namespace FlightGlobe.Meshes
                     EmitSignal(SignalName.FlightClicked, flightIndex);
                 };
 
+                var transform = Transform3D.Identity.Scaled(new(0.001f, 0.001f, 0.001f));
+
                 flightAreas[i] = flightArea;
+
+                Flights[i].UpdateSchedule(DateTime.AddDays(-1));
+                flightAreas[i].UpdateTransform(transform);
+                Multimesh.SetInstanceTransform(i, transform);
 
                 GetParent().AddChild(flightAreas[i]);
             }
@@ -50,21 +56,19 @@ namespace FlightGlobe.Meshes
 
         public override void _Process(double delta)
         {
-            updateTimer += (float)delta;
-            if (updateTimer < UPDATE_INTERVAL) return;
-            
-            var deltaF = updateTimer;
-            updateTimer = 0f;
+            if (deltaTimer.IsWaiting(delta)) return;
 
             for (int i = 0; i < Flights.Length; i++)
             {
                 var flight = Flights[i];
-                var transform = flight.ProcessTransform(OrbitCamera);
+                var progress = flight.GetProgress(DateTime);
+                if (progress > 0.0f)
+                {
+                    var transform = flight.ProcessTransform(OrbitCamera, progress);
 
-                flight.ProcessDirection(deltaF);
-
-                flightAreas[i].UpdateTransform(transform);
-                Multimesh.SetInstanceTransform(i, transform);
+                    flightAreas[i].UpdateTransform(transform);
+                    Multimesh.SetInstanceTransform(i, transform);
+                }
             }
         }
     }

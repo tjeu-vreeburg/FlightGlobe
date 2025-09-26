@@ -1,3 +1,5 @@
+using System;
+using System.Linq;
 using FlightGlobe.Base;
 using Godot;
 
@@ -7,48 +9,41 @@ namespace FlightGlobe.Data
     {
         public Route Route { get; set; }
         public Airplane Airplane { get; set; }
+        public Schedule[] Schedules { get; set; }
+        public Schedule CurrentSchedule { get; set; }
         public Vector3[] Path { get; set; }
-        public Direction Direction { get; set; }
-        public float DurationInSeconds { get; set; }
-        public float Progress { get; set; }
 
-        public void ProcessDirection(float delta)
+        public void UpdateSchedule(DateTime dateTime)
         {
-            var progressDelta = delta / DurationInSeconds;
+            var distanceKm = Route.GetDistanceInKilometers();
+            var baseFlightTime = distanceKm / Airplane.SpeedInKilometers;
+            var extraTime = distanceKm < 1000 ? 0.5f : 0.75f;
+            var durationHours = baseFlightTime + extraTime;
 
-            if (Direction == Direction.FROM)
+            foreach (var schedule in Schedules)
             {
-                Progress += progressDelta;
-                if (Progress >= 1.0f)
-                {
-                    Progress = 1.0f;
-                    Direction = Direction.TO;
-                }
+                schedule.UpdateCurrentSchedule(dateTime, durationHours);
             }
-            else
-            {
-                Progress -= progressDelta;
-                if (Progress <= 0.0f)
-                {
-                    Progress = 0.0f;
-                    Direction = Direction.FROM;
-                }
-            }
+
+            CurrentSchedule = Schedules
+                .Where(x => x.CurrentDepartureTime.HasValue)
+                .OrderBy(x => x.CurrentDepartureTime)
+                .FirstOrDefault();
         }
 
-        public Transform3D ProcessTransform(OrbitCamera orbitCamera)
+        public Transform3D ProcessTransform(OrbitCamera orbitCamera, float progress)
         {
             var pathLength = Path.Length - 1;
-            var t = Progress * pathLength;
+            var t = Mathf.Clamp(progress, 0f, 1f) * pathLength;
 
             var index = Mathf.Clamp(Mathf.FloorToInt(t), 0, pathLength - 1);
             var nextIndex = Mathf.Min(index + 1, pathLength);
 
             var fraction = t - index;
-            var position = Path[index] + (Path[nextIndex] - Path[index]) * fraction;
+            var position = Path[index].Lerp(Path[nextIndex], fraction);
             var surfaceNormal = position.Normalized();
 
-            var movementDirection = Direction == Direction.FROM ? Path[nextIndex] - Path[index] : Path[index] - Path[nextIndex];
+            var movementDirection = Path[nextIndex] - Path[index];
             movementDirection = movementDirection.Normalized();
 
             var forward = movementDirection;
@@ -63,14 +58,46 @@ namespace FlightGlobe.Data
             return new Transform3D(basis, position);
         }
 
-        public float GetDurationHours()
+        public bool IsIdle(DateTime dateTime)
         {
-            var distanceKm = Route.GetDistanceInKilometers();
+            var departureTime = CurrentSchedule.CurrentDepartureTime.Value;
+            return dateTime < departureTime;
+        }
 
-            var baseFlightTime = distanceKm / Airplane.SpeedInKilometers;
-            var extraTime = distanceKm < 1000 ? 0.5f : 0.75f;
+        public float GetProgress(DateTime dateTime)
+        {
+            if (CurrentSchedule?.CurrentDepartureTime == null || CurrentSchedule?.CurrentArrivalTime == null)
+                return 0.0f;
 
-            return baseFlightTime + extraTime;
+            var departureTime = CurrentSchedule.CurrentDepartureTime.Value;
+            var arrivalTime = CurrentSchedule.CurrentArrivalTime.Value;
+
+            if (dateTime < departureTime) return 0.0f;
+
+            if (dateTime >= arrivalTime)
+            {
+                UpdateSchedule(dateTime);
+                if (CurrentSchedule?.CurrentDepartureTime == null || CurrentSchedule?.CurrentArrivalTime == null) return 0.0f;
+
+                var newDepartureTime = CurrentSchedule.CurrentDepartureTime.Value;
+                var newArrivalTime = CurrentSchedule.CurrentArrivalTime.Value;
+
+                if (dateTime < newDepartureTime) return 0.0f;
+
+                if (dateTime < newArrivalTime)
+                {
+                    var newTotalDuration = newArrivalTime - newDepartureTime;
+                    var newElapsed = dateTime - newDepartureTime;
+                    return (float)(newElapsed.TotalSeconds / newTotalDuration.TotalSeconds);
+                }
+
+                return 0.0f;
+            }
+
+            var totalFlightDuration = arrivalTime - departureTime;
+            var elapsed = dateTime - departureTime;
+
+            return (float)(elapsed.TotalSeconds / totalFlightDuration.TotalSeconds);
         }
     }
 }
